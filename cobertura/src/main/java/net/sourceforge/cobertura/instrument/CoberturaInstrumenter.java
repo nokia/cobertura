@@ -98,6 +98,11 @@ public class CoberturaInstrumenter {
 	private boolean ignoreTrivial;
 
 	/**
+	 * If true, deprecated classes and methods will be ignore by coverage measurement
+	 */
+	private boolean ignoreDeprecated;
+
+	/**
 	 * If true: The process is interrupted when first error occured.
 	 */
 	private boolean failOnError;
@@ -155,7 +160,7 @@ public class CoberturaInstrumenter {
 		ClassReader cr0 = new ClassReader(inputStream);
 		ClassWriter cw0 = new ClassWriter(0);
 		DetectIgnoredCodeClassVisitor detectIgnoredCv = new DetectIgnoredCodeClassVisitor(
-				cw0, ignoreTrivial, ignoreMethodAnnotations);
+				cw0, ignoreTrivial, ignoreMethodAnnotations, ignoreDeprecated);
 		DetectDuplicatedCodeClassVisitor cv0 = new DetectDuplicatedCodeClassVisitor(
 				detectIgnoredCv);
 		cr0.accept(cv0, 0);
@@ -163,7 +168,7 @@ public class CoberturaInstrumenter {
 		ClassReader cr = new ClassReader(cw0.toByteArray());
 		ClassWriter cw = new ClassWriter(0);
 		BuildClassMapClassVisitor cv = new BuildClassMapClassVisitor(cw,
-				ignoreRegexes, ignoreClassAnnotations,
+				ignoreRegexes, ignoreDeprecated, ignoreClassAnnotations,
 				cv0.getDuplicatesLinesCollector(),
 				detectIgnoredCv.getIgnoredMethodNamesAndSignatures());
 
@@ -217,7 +222,7 @@ public class CoberturaInstrumenter {
                                                                                           // and there will be a mismatch when trying to find the counters
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
-			CheckClassAdapter.verify(new ClassReader(cw2.toByteArray()), false,
+			CheckClassAdapter.verify(new ClassReader(cw2.toByteArray()), InstrumentMain.urlClassLoader, false,
 					pw);
 			logger.debug(sw.toString());
 
@@ -315,6 +320,10 @@ public class CoberturaInstrumenter {
 
 	public void setIgnoreClassAnnotations(Set<String> ignoreClassAnnotations) {
 		this.ignoreClassAnnotations = ignoreClassAnnotations;
+	}
+
+	public void setIgnoreDeprecataed(boolean ignoreDeprecated) {
+		this.ignoreDeprecated = ignoreDeprecated;
 	}
 
 	public void setThreadsafeRigorous(boolean threadsafeRigorous) {

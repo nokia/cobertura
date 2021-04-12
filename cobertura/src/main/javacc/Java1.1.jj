@@ -304,9 +304,9 @@ public class JavaParser implements JavaParserInterface
       }
     } else {
       System.out.println("Java Parser Version 1.1:  Usage is one of:");
-      System.out.println("         java javancss.parser.JavaParser < inputfile");
+      System.out.println("         java net.sourceforge.cobertura.javancss.parser.JavaParser < inputfile");
       System.out.println("OR");
-      System.out.println("         java javancss.parser.JavaParser inputfile");
+      System.out.println("         java net.sourceforge.cobertura.javancss.parser.JavaParser inputfile");
       return;
     }
     try {
